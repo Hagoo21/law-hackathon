@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useDialogFlowStore } from "./store";
-import { GraphFlowNode, GraphFlowEdge, createEmptyNode } from "./nodes";
 import { toast } from "@/components/ui/use-toast";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -14,7 +13,8 @@ export function NaturalLanguageGenerator() {
   const generateFlow = async () => {
     if (!prompt) {
       toast({
-        title: "Please enter a description of your flow",
+        title: "Please enter a description",
+        description: "Enter a description of how you want the dialog flow to work",
         variant: "destructive",
       });
       return;
@@ -31,10 +31,16 @@ export function NaturalLanguageGenerator() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate flow");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to generate flow");
       }
 
       const { nodes, edges } = await response.json();
+      
+      if (!nodes || !edges) {
+        throw new Error("Invalid response format");
+      }
+
       setNodes(nodes);
       setEdges(edges);
 

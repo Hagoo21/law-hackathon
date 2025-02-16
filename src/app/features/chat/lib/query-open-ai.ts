@@ -6,37 +6,56 @@
  */
 export const queryOpenAI = async (data: any, stream=false) => {
   if (!data.hasOwnProperty("model")) {
-    // specifying default gpt model here
-    data["model"] = "gpt-3.5-turbo-0125";
+    data["model"] = "gpt-4o-2024-11-20";
   }
 
-  // Generate stream response
-  if (!stream) 
-    {
+  const headers = {
+    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  if (!stream) {
     data["stream"] = false;
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    const result = await response.json();
-    return result;
+    
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        headers,
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error?.message || response.statusText;
+        } catch {
+          errorMessage = errorText || response.statusText;
+        }
+        throw new Error(`OpenAI API error: ${errorMessage}`);
+      }
+
+      const result = await response.json();
+      return result;
+
+    } catch (error) {
+      console.error("OpenAI API error:", error);
+      throw error;
+    }
   } 
-  else 
-  {
-    // Generate Stream Response
-    data["stream"] = true;
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    return response;
+  
+  // Stream response
+  data["stream"] = true;
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    headers,
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
   }
+
+  return response;
 };

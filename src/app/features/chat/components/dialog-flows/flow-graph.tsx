@@ -123,7 +123,6 @@ function FlowGraph({ setOpen }: { setOpen: (open: boolean) => void }) {
   const { screenToFlowPosition } = useReactFlow();
 
   const {
-    name,
     nodes,
     edges,
     onNodesChange,
@@ -173,13 +172,13 @@ function FlowGraph({ setOpen }: { setOpen: (open: boolean) => void }) {
 
       setCompiledDialogFlow({
         prompt,
-        name,
+        name: "Generated Flow",
       });
 
       setOpen(false);
 
       toast({
-        title: `Dialog Flow activated: ${name}`,
+        title: "Dialog Flow activated",
         description: "The dialog flow has been activated in the conversation.",
       });
     } catch (error) {
@@ -207,8 +206,6 @@ function FlowGraph({ setOpen }: { setOpen: (open: boolean) => void }) {
           variant: "destructive",
         });
       }
-
-      console.error(error);
     }
   }
 
