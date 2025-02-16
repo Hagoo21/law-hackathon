@@ -46,7 +46,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { GlobeIcon, LockIcon } from "lucide-react";
+import { GlobeIcon, LockIcon, Wand2 } from "lucide-react";
+import { NaturalLanguageGenerator } from "./natural-language-generator";
 
 function Toolbar() {
   const { setType } = useToolbarStore();
@@ -242,7 +243,7 @@ function FlowGraph({ setOpen }: { setOpen: (open: boolean) => void }) {
               position: "absolute",
               right: "5px",
               bottom: "20px",
-              zIndex: 4, // ensure it is above the graph
+              zIndex: 4,
             }}
           >
             <Button
@@ -275,6 +276,7 @@ interface FlowEditorProps {
 }
 
 function FlowEditor({ setOpen }: FlowEditorProps) {
+  const [showGenerator, setShowGenerator] = useState(false);
   const { selectedItem: selectedItemId } = usePropertiesStore();
 
   const {
@@ -361,25 +363,18 @@ function FlowEditor({ setOpen }: FlowEditorProps) {
               ) : (
                 <LockIcon className="h-4 w-4" />
               )}
-
               {publicGraph ? "Public" : "Private"}
             </Badge>
           </div>
 
-          <div className="flex flex-row gap-2 justify-center w-[180px]">
-            <Switch
-              checked={model === "GPT-4"}
-              onCheckedChange={(checked) =>
-                setModel(checked ? "GPT-4" : "Claude")
-              }
-            />
-            <Badge
-              variant={model === "GPT-4" ? "default" : "secondary"}
-              className="flex flex-row gap-2"
-            >
-              {model === "GPT-4" ? "GPT-4" : "Claude"}
-            </Badge>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => setShowGenerator(!showGenerator)}
+            className="flex gap-2"
+          >
+            <Wand2 className="h-4 w-4" />
+            {showGenerator ? "Hide Generator" : "AI Generator"}
+          </Button>
 
           <Input
             value={name}
@@ -399,6 +394,9 @@ function FlowEditor({ setOpen }: FlowEditorProps) {
             </Badge>
           </div>
         </nav>
+        
+        {showGenerator && <NaturalLanguageGenerator />}
+        
         <FlowGraph setOpen={setOpen} />
       </div>
 

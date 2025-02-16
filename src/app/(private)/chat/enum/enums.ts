@@ -32,4 +32,5 @@ export enum ChatPanelOptions {
   searchDocuments = "Search Documents",
   uploadDocuments = "Upload Documents",
   dataFilters = "Data Filters",
+  generateDialogFlow = "Generate Dialog Flow"
 }

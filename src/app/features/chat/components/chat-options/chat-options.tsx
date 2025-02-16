@@ -1,5 +1,5 @@
 "use client";
-import { FileUp, FolderSearch, Settings2, X } from "lucide-react";
+import { FileUp, FolderSearch, Settings2, Wand2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchDocuments from "../search-documents/search-documents";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChatPanelOptions } from "@/app/(private)/chat/enum/enums";
+import { GenerateDialogFlow } from "./generate-dialog-flow";
+
 
 function ChatOptions() {
   const { chatPanelOption, setChatPanelOption } = useGlobalContext();
@@ -43,7 +45,7 @@ function ChatOptions() {
                 <FolderSearch className="h-[20px] w-[20px]" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent align="end" side="bottom"  sideOffset={10}>
+            <TooltipContent align="end" side="bottom" sideOffset={10}>
               Search Document
             </TooltipContent>
           </Tooltip>
@@ -72,6 +74,30 @@ function ChatOptions() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger className="!m-0" asChild>
+              <Button
+                onClick={() =>
+                  togglechatPanelOption(ChatPanelOptions.generateDialogFlow)
+                }
+                variant={"ghost"}
+                className={cn(
+                  "p-2 flex justify-center items-center h-fit cursor-pointer hover:bg-initial rounded-sm border-[1px] border-transparent",
+                  {
+                    "border-border bg-[#f8f8f8]":
+                      chatPanelOption === ChatPanelOptions.generateDialogFlow,
+                  }
+                )}
+              >
+                <Wand2 className="h-[20px] w-[20px]" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent align="end" side="bottom" sideOffset={10}>
+              Generate Dialog Flow
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Chat Options Content */}
@@ -96,6 +122,9 @@ function ChatOptions() {
         )}
         {chatPanelOption === ChatPanelOptions.uploadDocuments && (
           <UploadedDocuments />
+        )}
+        {chatPanelOption === ChatPanelOptions.generateDialogFlow && (
+          <GenerateDialogFlow />
         )}
       </div>
     </div>
